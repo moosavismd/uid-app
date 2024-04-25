@@ -15,6 +15,6 @@ jobs:
     steps:
     - uses: actions/checkout@v3
     - name: Build the Docker image
-      run: docker build . --file Dockerfile --tag moosavismd/uid-app:$(date +%s)
+      run: docker build . --file Dockerfile --tag moosavismd/uid-app:${{github.run_id}}
     - name: Push docker image
-      run: docker push moosavismd/uid-app:$(date +%s)
+      run: docker push moosavismd/uid-app:${{github.run_id}}
