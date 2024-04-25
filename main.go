@@ -101,6 +101,7 @@ func uidHandler(w http.ResponseWriter, r *http.Request, db *sql.DB) {
 	_, err := db.Exec("INSERT INTO uids (uid, timestamp) VALUES (?, ?)", uid.String(), time.Now())
 	if err != nil {
 		http.Error(w, "Error saving UID", http.StatusInternalServerError)
+		log.Println(err)
 		return
 	}
 
