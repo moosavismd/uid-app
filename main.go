@@ -24,7 +24,7 @@ type Config struct {
 }
 
 func main() {
-	config, err := readConfig("./config.json")
+	config, err := readConfig("/config/config.json")
 	if err != nil {
 		log.Fatal(err)
 	}
