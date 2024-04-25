@@ -4,6 +4,7 @@ import (
 	"database/sql"
 	"encoding/json"
 	"fmt"
+	"io/ioutil"
 	"log"
 	"net/http"
 	"os"
@@ -50,7 +51,7 @@ func main() {
 
 func readConfig(filePath string) (Config, error) {
 	var config Config
-	bytes, err := os.ReadFile(filePath)
+	bytes, err := ioutil.ReadFile(filePath)
 	if err != nil {
 		return config, err
 	}
@@ -59,17 +60,25 @@ func readConfig(filePath string) (Config, error) {
 }
 
 func setupDatabase(cfg Config) *sql.DB {
-	dsn := fmt.Sprintf("%s:%s@tcp(%s:%d)/%s", cfg.Database.User, cfg.Database.Password, cfg.Database.Host, cfg.Database.Port, cfg.Database.Dbname)
+	dsn := fmt.Sprintf("%s:%s@tcp(%s:%d)/", cfg.Database.User, cfg.Database.Password, cfg.Database.Host, cfg.Database.Port)
 	db, err := sql.Open("mysql", dsn)
 	if err != nil {
 		log.Fatalf("Error opening database: %v", err)
 	}
 
-	err = db.Ping()
+	// Ensure the database exists
+	_, err = db.Exec("CREATE DATABASE IF NOT EXISTS " + cfg.Database.Dbname)
 	if err != nil {
-		log.Fatalf("Error connecting to database: %v", err)
+		log.Fatalf("Error creating database: %v", err)
 	}
 
+	// Select the database
+	_, err = db.Exec("USE " + cfg.Database.Dbname)
+	if err != nil {
+		log.Fatalf("Error selecting database: %v", err)
+	}
+
+	// Create the uids table if it does not exist
 	createTableSQL := `CREATE TABLE IF NOT EXISTS uids (
         id INT AUTO_INCREMENT PRIMARY KEY,
         uid VARCHAR(255) NOT NULL,
@@ -84,12 +93,18 @@ func setupDatabase(cfg Config) *sql.DB {
 }
 
 func uidHandler(w http.ResponseWriter, r *http.Request, db *sql.DB) {
+	if r.Method != "GET" {
+		http.Error(w, "Method not supported", http.StatusNotFound)
+		return
+	}
+
 	uid := uuid.New()
 	_, err := db.Exec("INSERT INTO uids (uid, timestamp) VALUES (?, ?)", uid.String(), time.Now())
 	if err != nil {
 		http.Error(w, "Error saving UID", http.StatusInternalServerError)
 		return
 	}
+
 	fmt.Fprintf(w, "%s", uid.String())
 }
 
