@@ -3,7 +3,7 @@ A simple web application which returns a random uid each time it recieves a get 
 
 ## endpoints  
 - `/uid`: Whenever you send a get request to this endpoint it returns a random uid and store it in a mysql database.  
-- `health`: An endpoint to check the health of application.  
+- `/health`: An endpoint to check the health of application.  
 
 ## Vars  
 Set these variables for the application:  
