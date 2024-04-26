@@ -1,3 +1,4 @@
+# First stage
 FROM golang:1.22 as builder
 
 WORKDIR /app
@@ -7,7 +8,8 @@ RUN go mod download
 COPY . .
 RUN CGO_ENABLED=0 GOOS=linux go build -a -installsuffix cgo -o myapp .
 
-FROM alpine:latest  
+# Second Stage
+FROM alpine:latest
 
 WORKDIR /root/
 COPY --from=builder /app/myapp .
