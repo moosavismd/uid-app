@@ -20,7 +20,7 @@ jobs:
         username: ${{ secrets.DOCKERHUB_USERNAME }}
         password: ${{ secrets.DOCKERHUB_TOKEN }}
     - name: Build the Docker image
-      run: docker build . --file app/dockerfile --tag moosavismd/uid-app:${{ github.sha }}
+      run: docker build app/ --file app/dockerfile --tag moosavismd/uid-app:${{ github.sha }}
     - name: Push docker image
       run: docker push moosavismd/uid-app:${{ github.sha }}
 
