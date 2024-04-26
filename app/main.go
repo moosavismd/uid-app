@@ -41,7 +41,8 @@ func main() {
 
 	port := os.Getenv("PORT")
 	if port == "" {
-		log.Fatal("PORT environment variable not set.")
+		port = "80"
+		log.Println("Set te listening port to 80")
 	}
 
 	log.Printf("Server is running on port %s\n", port)
