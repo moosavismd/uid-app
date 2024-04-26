@@ -8,7 +8,7 @@ image:
   repository: moosavismd/uid-app
   pullPolicy: IfNotPresent
   # Overrides the image tag whose default is the chart appVersion.
-  APP_VERSION: 0f17de46ec6ad2e3ef6babe2ae18e5a34d9f9fee
+  tag: 0f17de46ec6ad2e3ef6babe2ae18e5a34d9f9fee
 
 imagePullSecrets: []
 nameOverride: ""
